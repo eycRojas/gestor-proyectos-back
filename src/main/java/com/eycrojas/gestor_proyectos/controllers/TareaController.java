@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/tarea")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://gestor-proyectos-front.web.app/")
 public class TareaController {
 
     @Autowired
