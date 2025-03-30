@@ -2,7 +2,7 @@ package com.eycrojas.gestor_proyectos.controllers;
 
 import com.eycrojas.gestor_proyectos.dtos.UsuarioDTO;
 import com.eycrojas.gestor_proyectos.entities.Usuario;
-import com.eycrojas.gestor_proyectos.services.UsuarioServiceImpl;
+import com.eycrojas.gestor_proyectos.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +13,15 @@ import java.util.Optional;
 
 @RestController()
 @RequestMapping("/usuario")
-@CrossOrigin(origins = "https://gestor-proyectos-front.web.app")
 public class UsuarioController {
 
     @Autowired
-    UsuarioServiceImpl usuarioServiceImpl;
+    UsuarioService usuarioService;
 
     @PostMapping
     public ResponseEntity<Usuario> saveUsuario(@RequestBody Usuario usuario) {
         try {
-            Usuario savedUsuario = usuarioServiceImpl.saveUsuario(usuario);
+            Usuario savedUsuario = usuarioService.saveUsuario(usuario);
             return new ResponseEntity<>(savedUsuario, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -32,7 +31,7 @@ public class UsuarioController {
     @PutMapping
     public ResponseEntity<Usuario> updateUsuario(@RequestBody Usuario usuario) {
         try {
-            Usuario savedUsuario = usuarioServiceImpl.updateUsuario(usuario);
+            Usuario savedUsuario = usuarioService.updateUsuario(usuario);
             return new ResponseEntity<>(savedUsuario, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -42,8 +41,8 @@ public class UsuarioController {
     @GetMapping
     public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
 
-        List<Usuario> usuarios = usuarioServiceImpl.getUsuarios();
-        List<UsuarioDTO> usuarioDTOS = usuarios.stream().map(usuarioServiceImpl::convertToDTO).toList();
+        List<Usuario> usuarios = usuarioService.getUsuarios();
+        List<UsuarioDTO> usuarioDTOS = usuarios.stream().map(usuarioService::convertToDTO).toList();
 
         return new ResponseEntity<>(usuarioDTOS, HttpStatus.OK);
     }
@@ -51,23 +50,11 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> getUsuarioById(@PathVariable Long id) {
 
-        Optional<Usuario> usuario = usuarioServiceImpl.getUsuarioById(id);
+        Optional<Usuario> usuario = usuarioService.getUsuarioById(id);
 
         if (usuario.isPresent()) {
-            UsuarioDTO usuarioDTO = usuarioServiceImpl.convertToDTO(usuario.get());
+            UsuarioDTO usuarioDTO = usuarioService.convertToDTO(usuario.get());
             return new ResponseEntity<>(usuarioDTO, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
-        Optional<Usuario> usuario = usuarioServiceImpl.getUsuarioById(id);
-        if (usuario.isPresent()) {
-            usuarioServiceImpl.deleteUsuario(usuario.get().getId());
-            return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -75,12 +62,23 @@ public class UsuarioController {
 
     @GetMapping("/email/{email}")
     public ResponseEntity<UsuarioDTO> getUsuarioByEmail(@PathVariable String email) {
-        Optional<Usuario> usuario = usuarioServiceImpl.getUsuarioByEmail(email);
+        Optional<Usuario> usuario = usuarioService.getUsuarioByEmail(email);
         if (usuario.isPresent()) {
-            UsuarioDTO usuarioDTO = usuarioServiceImpl.convertToDTO(usuario.get());
+            UsuarioDTO usuarioDTO = usuarioService.convertToDTO(usuario.get());
             return ResponseEntity.ok(usuarioDTO);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
+        Optional<Usuario> usuario = usuarioService.getUsuarioById(id);
+        if (usuario.isPresent()) {
+            usuarioService.deleteUsuario(usuario.get().getId());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

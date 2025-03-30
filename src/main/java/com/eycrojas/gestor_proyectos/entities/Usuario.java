@@ -46,4 +46,6 @@ public class Usuario {
     )
     private List<Proyecto> proyectosAsignados = new ArrayList<>();
 
+
+
 }

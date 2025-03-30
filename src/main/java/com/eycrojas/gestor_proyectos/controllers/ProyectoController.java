@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/proyecto")
-@CrossOrigin(origins = "https://gestor-proyectos-front.web.app")
 public class ProyectoController {
 
     @Autowired
@@ -110,9 +109,7 @@ public class ProyectoController {
 
     @PostMapping("/addParticipante/{proyectoId}/{usuarioId}")
     public ResponseEntity<UsuarioDTO> addParticipante(@PathVariable Long proyectoId, @PathVariable Long usuarioId) {
-        System.out.println("entra");
         try {
-            System.out.println("entra2");
             Proyecto proyecto = proyectoServiceImpl.getProyectoById(proyectoId)
                     .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
             Usuario usuario = usuarioServiceImpl.getUsuarioById(usuarioId)
@@ -123,6 +120,33 @@ public class ProyectoController {
 
             // Agregar el proyecto al usuario
             usuario.getProyectosAsignados().add(proyecto);
+
+            // Guardar cambios
+            usuarioServiceImpl.updateUsuario(usuario);
+
+            UsuarioDTO usuarioDTO = usuarioServiceImpl.convertToDTO(usuario);
+
+            return new ResponseEntity<>(usuarioDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/removeParticipante/{proyectoId}/{usuarioId}")
+    public ResponseEntity<UsuarioDTO> removeParticipante(@PathVariable Long proyectoId, @PathVariable Long usuarioId) {
+        System.out.println("entra");
+        try {
+            System.out.println("entra2");
+            Proyecto proyecto = proyectoServiceImpl.getProyectoById(proyectoId)
+                    .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+            Usuario usuario = usuarioServiceImpl.getUsuarioById(usuarioId)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            // Agregar el usuario al proyecto
+            proyecto.getUsuariosAsignados().remove(usuario);
+
+            // Agregar el proyecto al usuario
+            usuario.getProyectosAsignados().remove(proyecto);
 
             // Guardar cambios
             usuarioServiceImpl.updateUsuario(usuario);

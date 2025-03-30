@@ -31,4 +31,5 @@ public class Tarea {
     @JoinColumn(name = "proyecto_id")
     private Proyecto proyecto;
 
+
 }

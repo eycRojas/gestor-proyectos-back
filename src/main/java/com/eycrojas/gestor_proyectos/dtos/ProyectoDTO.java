@@ -16,4 +16,6 @@ public class ProyectoDTO {
     private List<TareaDTO> tareas;
 
     private List<UsuarioAsignadoDTO> usuariosAsignados;
+
+
 }

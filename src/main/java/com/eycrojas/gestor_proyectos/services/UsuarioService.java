@@ -1,5 +1,6 @@
 package com.eycrojas.gestor_proyectos.services;
 
+import com.eycrojas.gestor_proyectos.dtos.UsuarioDTO;
 import com.eycrojas.gestor_proyectos.entities.Usuario;
 
 import java.util.List;
@@ -18,5 +19,7 @@ public interface UsuarioService {
     void deleteUsuario(Long id);
 
     Optional<Usuario> getUsuarioByEmail(String email);
+
+    UsuarioDTO convertToDTO(Usuario usuario);
 
 }
